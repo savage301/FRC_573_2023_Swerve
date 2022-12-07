@@ -18,12 +18,13 @@
 
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxRelativeEncoder.h>
+#include "ctre/Phoenix.h"
 
 class SwerveModule {
  public:
   SwerveModule(int driveMotorChannel, int turningMotorChannel,
-               int turningEncoderChannelA, int turningEncoderChannelB);
-  frc::SwerveModuleState GetState() const;
+               int turningEncoderChannel);
+  frc::SwerveModuleState GetState() ;
   void SetDesiredState(const frc::SwerveModuleState& state);
 
  private:
@@ -40,7 +41,7 @@ class SwerveModule {
   rev::CANSparkMax m_turningMotor;
 
   rev::SparkMaxRelativeEncoder m_driveEncoder;
-  frc::Encoder m_turningEncoder;
+  ctre::phoenix::sensors::CANCoder m_turningEncoder;
 
   frc2::PIDController m_drivePIDController{1.0, 0, 0};
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
