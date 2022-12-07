@@ -16,27 +16,31 @@
 #include <units/voltage.h>
 #include <wpi/numbers>
 
+#include <rev/CANSparkMax.h>
+#include <rev/SparkMaxRelativeEncoder.h>
+
 class SwerveModule {
  public:
   SwerveModule(int driveMotorChannel, int turningMotorChannel,
-               int driveEncoderChannelA, int driveEncoderChannelB,
                int turningEncoderChannelA, int turningEncoderChannelB);
   frc::SwerveModuleState GetState() const;
   void SetDesiredState(const frc::SwerveModuleState& state);
 
  private:
+  // change this
   static constexpr double kWheelRadius = 0.0508;
-  static constexpr int kEncoderResolution = 4096;
+  static constexpr int kDriveEncoderResolution = 4096; // check
+  static constexpr int kSteerEncoderResolution = 4096;
 
   static constexpr auto kModuleMaxAngularVelocity =
       wpi::numbers::pi * 1_rad_per_s;  // radians per second
   static constexpr auto kModuleMaxAngularAcceleration =
       wpi::numbers::pi * 2_rad_per_s / 1_s;  // radians per second^2
 
-  frc::PWMSparkMax m_driveMotor;
-  frc::PWMSparkMax m_turningMotor;
+  rev::CANSparkMax m_driveMotor;
+  rev::CANSparkMax m_turningMotor;
 
-  frc::Encoder m_driveEncoder;
+  rev::SparkMaxRelativeEncoder m_driveEncoder;
   frc::Encoder m_turningEncoder;
 
   frc2::PIDController m_drivePIDController{1.0, 0, 0};
