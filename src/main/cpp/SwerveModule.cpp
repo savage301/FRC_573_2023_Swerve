@@ -7,6 +7,8 @@
 #include <frc/geometry/Rotation2d.h>
 #include <wpi/numbers>
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 SwerveModule::SwerveModule(const int driveMotorChannel,
                            const int turningMotorChannel,
                            const int turningEncoderChannel)
@@ -49,6 +51,9 @@ void SwerveModule::SetDesiredState(
   // Calculate the turning motor output from the turning PID controller.
   const auto turnOutput = m_turningPIDController.Calculate(
       units::radian_t(m_turningEncoder.GetPosition()), state.angle.Radians());
+  
+
+  frc::SmartDashboard::PutString("can coder", std::to_string(m_turningEncoder.GetPosition()));
 
   const auto turnFeedforward = m_turnFeedforward.Calculate(
       m_turningPIDController.GetSetpoint().velocity);
