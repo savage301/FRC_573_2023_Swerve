@@ -51,7 +51,7 @@ class SwerveModule {
 
   //double pval = frc::SmartDashboard::GetNumber("turn_PVal",1.0);
 
-  //frc2::PIDController m_turningPIDController{-12/1.5, 0, 0};
+  frc2::PIDController m_turningPIDController{12/1.5, 0, 0};
   
   /*frc::ProfiledPIDController<units::radians> m_turningPIDController{
       25.0,
