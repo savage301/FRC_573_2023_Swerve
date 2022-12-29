@@ -6,6 +6,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/filter/SlewRateLimiter.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #include "Drivetrain.h"
 
@@ -51,6 +52,10 @@ class Robot : public frc::TimedRobot {
                      Drivetrain::kMaxAngularSpeed;
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative);
+
+   // frc::SmartDashboard::PutString("xSpeed", std::to_string(xSpeed.value()));
+   // frc::SmartDashboard::PutString("ySpeed", std::to_string(ySpeed.value()));
+   // frc::SmartDashboard::PutString("rot", std::to_string(rot.value()));
   }
 };
 

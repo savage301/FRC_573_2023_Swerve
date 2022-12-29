@@ -20,11 +20,13 @@
 #include <rev/SparkMaxRelativeEncoder.h>
 #include "ctre/Phoenix.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 class SwerveModule {
  public:
   SwerveModule(int driveMotorChannel, int turningMotorChannel,
                int turningEncoderChannel);
-  frc::SwerveModuleState GetState() ;
+  frc::SwerveModuleState GetState();
   void SetDesiredState(const frc::SwerveModuleState& state);
 
  private:
@@ -35,21 +37,28 @@ class SwerveModule {
   static constexpr auto kModuleMaxAngularVelocity =
       wpi::numbers::pi * 1_rad_per_s;  // radians per second
   static constexpr auto kModuleMaxAngularAcceleration =
-      wpi::numbers::pi * 2_rad_per_s / 1_s;  // radians per second^2
+      wpi::numbers::pi * 2_rad_per_s_sq;  // radians per second^2
 
   rev::CANSparkMax m_driveMotor;
   rev::CANSparkMax m_turningMotor;
+
 
   rev::SparkMaxRelativeEncoder m_driveEncoder;
   ctre::phoenix::sensors::CANCoder m_turningEncoder;
 
   frc2::PIDController m_drivePIDController{1.0, 0, 0};
-  frc::ProfiledPIDController<units::radians> m_turningPIDController{
-      .0001,
-      0.0,
-      0.0,
-      {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};
 
+
+  //double pval = frc::SmartDashboard::GetNumber("turn_PVal",1.0);
+
+  //frc2::PIDController m_turningPIDController{-12/1.5, 0, 0};
+  
+  /*frc::ProfiledPIDController<units::radians> m_turningPIDController{
+      25.0,
+      0.0,
+      0.0,
+      frc::TrapezoidProfile<units::radians>::Constraints{kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};
+*/
   frc::SimpleMotorFeedforward<units::meters> m_driveFeedforward{1_V,
                                                                 3_V / 1_mps};
   frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward{
