@@ -2,6 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
+// The rear modules must be started 180 degrees from those in the front for the motors to drive correctly.
+
 #include "SwerveModule.h"
 
 #include <frc/geometry/Rotation2d.h>
@@ -19,7 +22,7 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
   // resolution.
-   //   m_turningMotor.SetInverted(true);
+
   m_driveEncoder.SetPositionConversionFactor(2 * wpi::numbers::pi * kWheelRadius /
                                      kDriveEncoderResolution);
   m_driveEncoder.SetVelocityConversionFactor(2 * wpi::numbers::pi * kWheelRadius /
@@ -27,8 +30,8 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
 
   // Limit the PID Controller's input range between -pi and pi and set the input
   // to be continuous.
-  m_turningPIDController.EnableContinuousInput(
-      -(wpi::numbers::pi),(wpi::numbers::pi));
+ // m_turningPIDController.EnableContinuousInput(
+ //     -(wpi::numbers::pi),(wpi::numbers::pi));
 }
 
 // removed const to fix build
@@ -45,8 +48,6 @@ void SwerveModule::SetDesiredState(
 
     frc::SmartDashboard::PutString("FL Module Ref Speed", std::to_string(referenceState.speed.value()));
     frc::SmartDashboard::PutString("FL Module Ref Angle", std::to_string(referenceState.angle.Radians().value()));
-
-
     frc::SmartDashboard::PutString("FL Module Command Speed", std::to_string(state.speed.value()));
     frc::SmartDashboard::PutString("FL Module Command Angle", std::to_string(state.angle.Radians().value()));
 
@@ -63,7 +64,7 @@ void SwerveModule::SetDesiredState(
 const auto turnOutput = -12/1.5*(m_turningEncoder.GetPosition() - state.angle.Radians().value());
 
  // const auto turnOutput = m_turningPIDController.Calculate(
-  //    (m_turningEncoder.GetPosition(), state.angle.Radians().value()));
+ //    (m_turningEncoder.GetPosition(), state.angle.Radians().value()));
 
     frc::SmartDashboard::PutString("FL Turn Enc Input", std::to_string(m_turningEncoder.GetPosition()));
     frc::SmartDashboard::PutString("FL Turn State Input", std::to_string(state.angle.Radians().value()));

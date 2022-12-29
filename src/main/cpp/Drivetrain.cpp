@@ -20,7 +20,7 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   
   m_frontLeft.SetDesiredState(fl);
  // m_frontRight.SetDesiredState(fr);
-  //m_backLeft.SetDesiredState(bl);
+  m_backLeft.SetDesiredState(bl);
   //m_backRight.SetDesiredState(br);
 }
 
