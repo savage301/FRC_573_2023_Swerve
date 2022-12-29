@@ -31,7 +31,7 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // Limit the PID Controller's input range between -pi and pi and set the input
   // to be continuous.
   m_turningPIDController.EnableContinuousInput(
-      -(wpi::numbers::pi),(wpi::numbers::pi));
+      -units::radian_t(wpi::numbers::pi),units::radian_t(wpi::numbers::pi));
 }
 
 // removed const to fix build
@@ -46,11 +46,12 @@ void SwerveModule::SetDesiredState(
   const auto state = frc::SwerveModuleState::Optimize(
       referenceState, units::radian_t(m_turningEncoder.GetPosition()));
 
-    frc::SmartDashboard::PutString("FL Module Ref Speed", std::to_string(referenceState.speed.value()));
+    /*frc::SmartDashboard::PutString("FL Module Ref Speed", std::to_string(referenceState.speed.value()));
     frc::SmartDashboard::PutString("FL Module Ref Angle", std::to_string(referenceState.angle.Radians().value()));
     frc::SmartDashboard::PutString("FL Module Command Speed", std::to_string(state.speed.value()));
     frc::SmartDashboard::PutString("FL Module Command Angle", std::to_string(state.angle.Radians().value()));
-
+    */
+   
   // Calculate the drive output from the drive PID controller.
   const auto driveOutput = m_drivePIDController.Calculate(
       m_driveEncoder.GetVelocity(), state.speed.value());
@@ -58,29 +59,24 @@ void SwerveModule::SetDesiredState(
   const auto driveFeedforward = m_driveFeedforward.Calculate(state.speed);
 
   // Calculate the turning motor output from the turning PID controller.
+  const auto turnOutput = m_turningPIDController.Calculate(
+    (units::radian_t (m_turningEncoder.GetPosition())), state.angle.Radians());
 
- 
-
-//const auto turnOutput = 12/1.5*(state.angle.Radians().value() - m_turningEncoder.GetPosition());
-
-const auto turnOutput = m_turningPIDController.Calculate(m_turningEncoder.GetPosition(), state.angle.Radians().value());
-
-    frc::SmartDashboard::PutString("FL Turn Enc Input", std::to_string(m_turningEncoder.GetPosition()));
+    /*frc::SmartDashboard::PutString("FL Turn Enc Input", std::to_string(m_turningEncoder.GetPosition()));
     frc::SmartDashboard::PutString("FL Turn State Input", std::to_string(state.angle.Radians().value()));
     frc::SmartDashboard::PutString("FL Turn Output", std::to_string(turnOutput));
-
-  
-  frc::SmartDashboard::PutString("can coder", std::to_string(m_turningEncoder.GetPosition()));
+    frc::SmartDashboard::PutString("can coder", std::to_string(m_turningEncoder.GetPosition()));
+    */
 
   const auto turnFeedforward = m_turnFeedforward.Calculate(
-      units::radians_per_second_t(m_turningEncoder.GetVelocity()));
+      units::radians_per_second_t(m_turningPIDController.GetSetpoint().velocity));
 
   // Set the motor outputs.
   m_driveMotor.SetVoltage(units::volt_t{driveOutput} + driveFeedforward);
-  m_turningMotor.SetVoltage(units::volt_t{turnOutput});// + turnFeedforward);
+  m_turningMotor.SetVoltage(units::volt_t{turnOutput} + turnFeedforward);
 
-  frc::SmartDashboard::PutString("FL Drive Motor Voltage", std::to_string((units::volt_t{driveOutput} + driveFeedforward).value()));
+  /*frc::SmartDashboard::PutString("FL Drive Motor Voltage", std::to_string((units::volt_t{driveOutput} + driveFeedforward).value()));
   frc::SmartDashboard::PutString("FL Turn Motor Output Voltage", std::to_string((units::volt_t{turnOutput}).value()));
-
   frc::SmartDashboard::PutString("FL Turn Motor FF Output Voltage", std::to_string((units::volt_t{turnFeedforward}.value())));
+  */
 }

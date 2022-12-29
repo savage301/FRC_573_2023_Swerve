@@ -19,9 +19,9 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
 
   
   m_frontLeft.SetDesiredState(fl);
- // m_frontRight.SetDesiredState(fr);
-  //m_backLeft.SetDesiredState(bl);
-  //m_backRight.SetDesiredState(br);
+  m_frontRight.SetDesiredState(fr);
+  m_backLeft.SetDesiredState(bl);
+  m_backRight.SetDesiredState(br);
 }
 
 void Drivetrain::UpdateOdometry() {
