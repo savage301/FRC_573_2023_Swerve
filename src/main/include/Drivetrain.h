@@ -8,6 +8,7 @@
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
+#include <frc/trajectory/TrajectoryConfig.h>
 
 #include <wpi/numbers>
 
