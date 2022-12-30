@@ -8,6 +8,8 @@
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
+#include <frc/trajectory/TrajectoryConfig.h>
+
 #include <wpi/numbers>
 
 #include "SwerveModule.h"
@@ -25,11 +27,17 @@ class Drivetrain {
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
              bool fieldRelative);
   void UpdateOdometry();
+  void ResetOdometry(const frc::Pose2d& pose);
+  frc::Pose2d GetPose() const;
 
   static constexpr units::meters_per_second_t kMaxSpeed =
-      3.0_mps;  // 3 meters per second
+      5.0_mps;  // 5 meters per second
   static constexpr units::radians_per_second_t kMaxAngularSpeed{
       wpi::numbers::pi};  // 1/2 rotation per second
+
+  static constexpr auto kMaxAcceleration =
+     units::meters_per_second_squared_t(2.5);  // meters per second^2
+frc::TrajectoryConfig auto_traj {kMaxSpeed,kMaxAcceleration};
 
  private:
   frc::Translation2d m_frontLeftLocation{+0.305_m, +0.305_m};
@@ -49,4 +57,7 @@ class Drivetrain {
       m_backRightLocation};
 
   frc::SwerveDriveOdometry<4> m_odometry{m_kinematics, m_gyro.GetRotation2d()};
+
+
+  
 };
