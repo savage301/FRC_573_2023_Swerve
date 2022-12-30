@@ -39,6 +39,9 @@ class Robot : public frc::TimedRobot {
   // Update robot position on Field2d.
     m_field.SetRobotPose(m_swerve.GetPose());
 
+  // Send Field2d to SmartDashboard.
+    frc::SmartDashboard::PutData(&m_field);
+
   if (m_timer.Get() < exampleTrajectory.TotalTime()) {
   // Get the desired pose from the trajectory.
     auto desiredPose = exampleTrajectory.Sample(m_timer.Get());
@@ -72,11 +75,11 @@ class Robot : public frc::TimedRobot {
   // -------------- Added for Auto------------------------------
   frc::Trajectory exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
       // Start at the origin facing the +X direction
-      frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)),
+      frc::Pose2d(5_m, 5_m, frc::Rotation2d(0_deg)),
       // Pass through these two interior waypoints, making an 's' curve path
-      {frc::Translation2d(1_m, 1_m), frc::Translation2d(2_m, -1_m)},
+      {frc::Translation2d(6_m, 6_m), frc::Translation2d(7_m, 4_m)},
       // End 3 meters straight ahead of where we started, facing forward
-      frc::Pose2d(3_m, 0_m, frc::Rotation2d(0_deg)),
+      frc::Pose2d(8_m, 5_m, frc::Rotation2d(0_deg)),
       // Pass the config
       m_swerve.auto_traj);
 
