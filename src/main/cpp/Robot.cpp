@@ -7,14 +7,54 @@
 #include <frc/XboxController.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/trajectory/TrajectoryGenerator.h>
+#include <frc/smartdashboard/Field2d.h>
+#include <frc/Timer.h>
+#include <frc/controller/RamseteController.h>
+
 
 #include "Drivetrain.h"
 
 class Robot : public frc::TimedRobot {
  public:
-  void AutonomousPeriodic() override {
-    DriveWithJoystick(false);
+ void AutonomousInit() override{
+
+   // Start the timer.
+    m_timer.Start();
+
+    // Send Field2d to SmartDashboard.
+    frc::SmartDashboard::PutData(&m_field);
+
+    // Reset the drivetrain's odometry to the starting pose of the trajectory.
+    m_swerve.ResetOdometry(exampleTrajectory.InitialPose());
+
+    // Send our generated trajectory to Field2d.
+    m_field.GetObject("traj")->SetTrajectory(exampleTrajectory);
+
+ }
+  void AutonomousPeriodic() override {   
+  // Update odometry.
     m_swerve.UpdateOdometry();
+
+  // Update robot position on Field2d.
+    m_field.SetRobotPose(m_swerve.GetPose());
+
+  if (m_timer.Get() < exampleTrajectory.TotalTime()) {
+  // Get the desired pose from the trajectory.
+    auto desiredPose = exampleTrajectory.Sample(m_timer.Get());
+
+  // Get the reference chassis speeds from the Ramsete Controller.
+    auto refChassisSpeeds =
+      m_ramseteController.Calculate(m_swerve.GetPose(), desiredPose);
+
+  // Set the linear and angular speeds.
+      m_swerve.Drive(refChassisSpeeds.vx, refChassisSpeeds.vy, refChassisSpeeds.omega,false);
+    } 
+    else {
+      m_swerve.Drive(units::meters_per_second_t(0), units::meters_per_second_t(0), units::radians_per_second_t(0), false); 
+    }
+
+
   }
 
   void TeleopPeriodic() override { DriveWithJoystick(false); }
@@ -28,6 +68,28 @@ class Robot : public frc::TimedRobot {
   frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{3 / 1_s};
   frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{3 / 1_s};
   frc::SlewRateLimiter<units::scalar> m_rotLimiter{3 / 1_s};
+
+  // -------------- Added for Auto------------------------------
+  frc::Trajectory exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+      // Start at the origin facing the +X direction
+      frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)),
+      // Pass through these two interior waypoints, making an 's' curve path
+      {frc::Translation2d(1_m, 1_m), frc::Translation2d(2_m, -1_m)},
+      // End 3 meters straight ahead of where we started, facing forward
+      frc::Pose2d(3_m, 0_m, frc::Rotation2d(0_deg)),
+      // Pass the config
+      m_swerve.auto_traj);
+
+  // The Ramsete Controller to follow the trajectory.
+  frc::RamseteController m_ramseteController;
+
+  // The timer to use during the autonomous period.
+  frc::Timer m_timer;
+
+  // Create Field2d for robot and trajectory visualizations.
+  frc::Field2d m_field;
+
+// -------------------------------------------------------------
 
   void DriveWithJoystick(bool fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
@@ -56,6 +118,7 @@ class Robot : public frc::TimedRobot {
    // frc::SmartDashboard::PutString("xSpeed", std::to_string(xSpeed.value()));
    // frc::SmartDashboard::PutString("ySpeed", std::to_string(ySpeed.value()));
    // frc::SmartDashboard::PutString("rot", std::to_string(rot.value()));
+  
   }
 };
 
