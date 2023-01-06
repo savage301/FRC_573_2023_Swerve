@@ -74,14 +74,20 @@ void SwerveModule::SetDesiredState(
       units::radians_per_second_t(m_turningPIDController.GetSetpoint().velocity));
 
   // Set the motor outputs.
-  if (m_driveMotor.GetDeviceId() == 4 || m_driveMotor.GetDeviceId() == 10){
+  if (m_driveMotor.GetDeviceId() == 1 || m_driveMotor.GetDeviceId() == 7 || m_driveMotor.GetDeviceId() == 4){
     m_driveMotor.SetVoltage(units::volt_t{-driveOutput} );//+ driveFeedforward);
   }
   else{
     m_driveMotor.SetVoltage(units::volt_t{driveOutput} );//+ driveFeedforward);
   }
   //m_driveMotor.SetVoltage(units::volt_t{driveOutput} );//+ driveFeedforward);
-  m_turningMotor.SetVoltage(units::volt_t{turnOutput} );//+ turnFeedforward);
+  
+  if (m_turningMotor.GetDeviceId() == 5 || m_turningMotor.GetDeviceId() == 11){
+    m_turningMotor.SetVoltage(units::volt_t{-turnOutput} );//+ turnFeedforward);
+  }else{
+    m_turningMotor.SetVoltage(units::volt_t{turnOutput} );//+ turnFeedforward);
+  }
+  //m_turningMotor.SetVoltage(units::volt_t{turnOutput} );//+ turnFeedforward);
 
   frc::SmartDashboard::PutString("Module Drive Motor Voltage", std::to_string((units::volt_t{driveOutput} + driveFeedforward).value()));
   frc::SmartDashboard::PutString("Module Turn Motor Output Voltage", std::to_string((units::volt_t{turnOutput}).value()));
