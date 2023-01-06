@@ -118,10 +118,10 @@ class Robot : public frc::TimedRobot {
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative);
 
-   // frc::SmartDashboard::PutString("xSpeed", std::to_string(xSpeed.value()));
-   // frc::SmartDashboard::PutString("ySpeed", std::to_string(ySpeed.value()));
-   // frc::SmartDashboard::PutString("rot", std::to_string(rot.value()));
-  
+   frc::SmartDashboard::PutString("xSpeed", std::to_string(xSpeed.value()));
+   frc::SmartDashboard::PutString("ySpeed", std::to_string(ySpeed.value()));
+   frc::SmartDashboard::PutString("rot", std::to_string(rot.value()));
+  m_swerve.UpdateOdometry();
   }
 };
 

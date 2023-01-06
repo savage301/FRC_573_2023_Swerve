@@ -31,7 +31,7 @@ class SwerveModule {
 
  private:
   static constexpr double kWheelRadius = 0.0508;
-  static constexpr int kDriveEncoderResolution = 4096*6.75;
+  static constexpr int kDriveEncoderResolution = 42*6.75;
   static constexpr int kSteerEncoderResolution = 4096;
 
   static constexpr auto kModuleMaxAngularVelocity =
